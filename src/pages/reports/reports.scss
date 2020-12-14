@@ -1,0 +1,13 @@
+.r-home {
+  .c-home-table {
+    &__items {
+      cursor: pointer;
+    }
+  }
+
+  .c-home-button {
+    position: fixed;
+    right: 25px;
+    bottom: 20px;
+  }
+}
