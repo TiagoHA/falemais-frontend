@@ -1,18 +1,20 @@
-import './App.css';
+import "./App.css";
+import { BrowserRouter } from "react-router-dom";
+import Routes from "./routes/routes";
+import { Header } from "./shared/components/header/header";
+import { Suspense } from "react";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="l-App">
+      <BrowserRouter>
+        <Header />
+        <div className="l-container l-main-container">
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes />
+          </Suspense>
+        </div>
+      </BrowserRouter>
     </div>
   );
 }
