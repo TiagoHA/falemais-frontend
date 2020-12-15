@@ -43,7 +43,7 @@ export default function Reports() {
 
           <tbody>
             {plans.map((plan) => (
-              <tr className="c-home-table" key={plan.id}>
+              <tr className="c-home-table__row" key={plan.id}>
                 <td className="c-home-table__items">{plan.prefixDestiny}</td>
                 <td className="c-home-table__items">{plan.prefixOrigin}</td>
                 <td className="c-home-table__items">{plan.minutesSpent}</td>
