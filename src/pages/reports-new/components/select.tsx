@@ -1,16 +1,21 @@
 import { useState } from "react";
 
-// interface IProps {
-//   description: string;
-//   onchange: Function;
-// }
+interface IProps {
+  onChange: Function;
+  label: string;
+  data: [
+    {
+      item: string;
+      id: string;
+      description: string;
+    }
+  ];
+}
 
-export function Select(props) {
-  const [value, setValue] = useState("0");
+export function Select(props: IProps) {
+  const [value, setValue] = useState<string>("0");
 
   function onChanged(e: React.ChangeEvent<HTMLSelectElement>) {
-    e.preventDefault();
-    console.log("dbg ~ selectChanged ~ e", e.target.value);
     setValue(e.target.value);
     props.onChange(e.target.value);
   }

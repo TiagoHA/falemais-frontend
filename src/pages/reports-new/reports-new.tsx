@@ -1,39 +1,40 @@
+import "./reports-new.scss";
 import { useEffect, useState } from "react";
-import { api } from "../../services/api";
+import { useHistory } from "react-router-dom";
 import { Select } from "./components/select";
+import { rateService } from "../../services/api/rate.service";
+import { priceReportApi } from "../../services/api/price-report.service";
+import { phonePlanService } from "../../services/api/phone-plan.service";
 
 export default function ReportsNew() {
   const [rates, setRates] = useState();
-  const [selectedRate, setSelectedRate] = useState();
-  const [selectedPlan, setSelectedPlan] = useState();
+  const [selectedRate, setSelectedRate] = useState<string>();
+  const [selectedPlan, setSelectedPlan] = useState<string>();
   const [phonePlans, setPhonePlans] = useState();
-  const [minutesSpent, setMinutesSpent] = useState(0);
+  const [minutesSpent, setMinutesSpent] = useState<number>();
+  const [loading, setLoading] = useState(0);
+  const history = useHistory();
 
   useEffect(() => {
     getRates();
     getPhonePlans();
   }, []);
 
-  async function getRates() {
-    const res: any = await api.get("/rate");
+  const itsLoading = () => setLoading((prev) => prev + 1);
+  const itsNotLoading = () => setLoading((prev) => prev - 1);
 
-    const withDescription = res.data.map((rate) => {
-      return {
-        ...rate,
-        description: `Origin: ${rate.prefixOrigin} - Destiny: ${rate.prefixDestiny} - price minute: ${rate.price}`,
-      };
-    });
-    setRates(withDescription);
-    console.log("dbg ~ getRates ~ rates", res);
+  async function getRates() {
+    itsLoading();
+    const rates = await rateService.get();
+    setRates(rates);
+    itsNotLoading();
   }
 
   async function getPhonePlans() {
-    const res: any = await api.get("/phone-plans");
-    const withDescription = res.data.map((plan) => {
-      return { ...plan, description: plan.name };
-    });
-    setPhonePlans(withDescription);
-    console.log("dbg ~ getRates ~ rates", res);
+    itsLoading();
+    const plans = await phonePlanService.get();
+    setPhonePlans(plans);
+    itsNotLoading();
   }
 
   function handleMinutes(e) {
@@ -54,16 +55,16 @@ export default function ReportsNew() {
       },
     };
 
-    try {
-      const res = await api.post("/report-plans", data);
-      console.log("dbg ~ submit ~ res", res);
-    } catch (error) {
-      console.log("dbg ~ submit ~ error", error);
-    }
+    await priceReportApi.post(data);
+    history.push("/");
+  }
+
+  if (loading) {
+    return <div className="col c-reports-new">Loading</div>;
   }
 
   return (
-    <div className="reports-new">
+    <div className="col c-reports-new">
       <div className="row">
         <div className="col s12 m6">
           <Select
@@ -82,20 +83,18 @@ export default function ReportsNew() {
       </div>
       <div className="row">
         <form className="col s12 m6">
-          <div className="row">
-            <div className="input-field col s12">
-              <input
-                placeholder="minutes"
-                id="minutes_spent"
-                type="text"
-                className="validate"
-                onChange={handleMinutes}
-                value={minutesSpent}
-              />
-              <label htmlFor="minutes_spent">
-                Desired minutes minutes you want to spend
-              </label>
-            </div>
+          <div className="input-field s12">
+            <input
+              placeholder=""
+              id="minutes_spent"
+              type="text"
+              className="validate"
+              onChange={handleMinutes}
+              value={minutesSpent}
+            />
+            <label htmlFor="minutes_spent">
+              Desired minutes minutes you want to spend
+            </label>
           </div>
         </form>
       </div>
@@ -105,7 +104,7 @@ export default function ReportsNew() {
         name="action"
         onClick={submit}
       >
-        Submit
+        Create
         <i className="material-icons right">send</i>
       </button>
     </div>

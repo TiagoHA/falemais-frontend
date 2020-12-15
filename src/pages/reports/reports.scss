@@ -1,7 +1,10 @@
 .r-home {
   .c-home-table {
     &__items {
-      cursor: pointer;
+      &.-clicked {
+        cursor: pointer;
+        font-size: 14px;
+      }
     }
   }
 
